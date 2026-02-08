@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promise Day 💛</title>
+
+<style>
+:root{
+  --green:#25d366;
+  --dark:#075e54;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
+}
+
+/* ===== BACKGROUND PHOTO ===== */
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+
+/* blurred image */
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.7)),
+    url("bg.jpg") center/cover no-repeat;
+  filter:blur(8px) saturate(1.1);
+  transform:scale(1.08);
+  z-index:0;
+}
+
+/* vignette */
+body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle, transparent 40%, rgba(0,0,0,.6));
+  z-index:1;
+}
+
+/* ===== PHONE ===== */
+.phone{
+  width:100%;
+  max-width:390px;
+  height:92vh;
+  border-radius:28px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(20px);
+  box-shadow:0 25px 60px rgba(0,0,0,.5);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  z-index:2;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#075e54,#128c7e);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#fff;
+}
+
+.header img{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid rgba(255,255,255,.6);
+}
+
+.header span{
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+/* CHAT */
+.chat{
+  flex:1;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow-y:auto;
+}
+
+.msg{
+  max-width:78%;
+  padding:12px 16px;
+  border-radius:18px;
+  font-size:14px;
+  line-height:1.45;
+  animation:pop .35s ease;
+}
+
+.left{
+  background:rgba(255,255,255,.9);
+  align-self:flex-start;
+  border-top-left-radius:6px;
+}
+
+.right{
+  background:linear-gradient(135deg,#dcf8c6,#b7f7a4);
+  align-self:flex-end;
+  border-top-right-radius:6px;
+}
+
+/* typing indicator */
+.typing{
+  display:flex;
+  gap:4px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.8);
+  border-radius:14px;
+  width:fit-content;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  background:#555;
+  border-radius:50%;
+  animation:blink 1.4s infinite both;
+}
+
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+
+@keyframes blink{
+  0%{opacity:.2}
+  20%{opacity:1}
+  100%{opacity:.2}
+}
+
+@keyframes pop{
+  from{opacity:0;transform:translateY(8px) scale(.95)}
+  to{opacity:1;transform:none}
+}
+
+/* FOOTER */
+.footer{
+  padding:14px;
+  text-align:center;
+}
+
+button{
+  padding:12px 26px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#25d366,#1da851);
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(37,211,102,.4);
+}
+
+/* FLOATING HEARTS */
+.heart{
+  position:absolute;
+  bottom:-20px;
+  font-size:18px;
+  animation:floatUp linear forwards;
+  pointer-events:none;
+  z-index:1;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(0) scale(1);opacity:.9}
+  to{transform:translateY(-120vh) scale(1.8);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+  <div class="header">
+    <img src="her.jpg">
+    <span>My Forever 💛</span>
+  </div>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="footer">
+    <button onclick="start()">Open Promise 💬</button>
+  </div>
+</div>
+
+<script>
+const chat=document.getElementById("chat");
+
+const messages=[
+ {t:"Hey ❤️",s:"left"},
+ {t:"Promise Day today…",s:"left"},
+ {t:"I was thinking about us 🥺",s:"left"},
+ {t:"I may not be perfect…",s:"right"},
+ {t:"But I promise effort.",s:"right"},
+ {t:"To stay, to grow,",s:"right"},
+ {t:"and to choose you every day 💛",s:"right"},
+ {t:"Always you 🤍",s:"right"},
+];
+
+let i=0;
+let heartInterval;
+
+function typing(){
+  const t=document.createElement("div");
+  t.className="typing";
+  t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  chat.appendChild(t);
+  chat.scrollTop=chat.scrollHeight;
+  return t;
+}
+
+function start(){
+  if(i===0) startHearts();
+
+  if(i<messages.length){
+    const t=typing();
+    setTimeout(()=>{
+      t.remove();
+      const m=document.createElement("div");
+      m.className=`msg ${messages[i].s}`;
+      m.innerText=messages[i].t;
+      chat.appendChild(m);
+      chat.scrollTop=chat.scrollHeight;
+      i++;
+      start();
+    },900);
+  }
+}
+
+function createHeart(){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerText=Math.random()>.5?"❤️":"💛";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(14+Math.random()*24)+"px";
+  h.style.animationDuration=(4+Math.random()*4)+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),7000);
+}
+
+function startHearts(){
+  heartInterval=setInterval(createHeart,450);
+}
+</script>
+
+</body>
+</html>
